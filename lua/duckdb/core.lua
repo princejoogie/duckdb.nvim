@@ -40,7 +40,8 @@ end
 function M.fetch_data_for_page(buf)
 	local offset = (M.state.current_page - 1) * config.rows_per_page
 	local cmd = string.format(
-		"duckdb -c \"SELECT * FROM '%s' LIMIT %d OFFSET %d\"",
+		'duckdb -c ".maxrows %d" -c "SELECT * FROM \'%s\' LIMIT %d OFFSET %d"',
+		config.rows_per_page,
 		M.state.current_file,
 		config.rows_per_page,
 		offset
