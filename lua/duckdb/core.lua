@@ -1,3 +1,4 @@
+local config = require("duckdb.config").config
 local M = {}
 
 M.valid_subcommands = { "open", "close", "first", "last", "next", "prev" }
@@ -5,7 +6,6 @@ M.valid_subcommands = { "open", "close", "first", "last", "next", "prev" }
 M.default_state = {
 	current_page = 0,
 	total_rows = 0,
-	rows_per_page = 50,
 	current_file = nil,
 	bufnr = nil,
 }
@@ -19,8 +19,8 @@ local function update_buffer_title(buf)
 	local title = string.format(
 		"CSV [Page %d/%d] (%d rows per page) - %s",
 		M.state.current_page,
-		math.ceil(M.state.total_rows / M.state.rows_per_page),
-		M.state.rows_per_page,
+		math.ceil(M.state.total_rows / config.rows_per_page),
+		config.rows_per_page,
 		vim.fn.fnamemodify(M.state.current_file, ":t")
 	)
 	vim.api.nvim_buf_set_name(buf, title)
@@ -38,11 +38,11 @@ end
 --- Fetch data from DuckDB for the current page and update the buffer
 --- @param buf number The buffer number to update with new data
 function M.fetch_data_for_page(buf)
-	local offset = (M.state.current_page - 1) * M.state.rows_per_page
+	local offset = (M.state.current_page - 1) * config.rows_per_page
 	local cmd = string.format(
 		"duckdb -c \"SELECT * FROM '%s' LIMIT %d OFFSET %d\"",
 		M.state.current_file,
-		M.state.rows_per_page,
+		config.rows_per_page,
 		offset
 	)
 
@@ -81,7 +81,7 @@ end
 --- Navigate to the last page of data
 --- @param buf number The buffer number to update
 function M.last_page(buf)
-	local max_pages = math.ceil(M.state.total_rows / M.state.rows_per_page)
+	local max_pages = math.ceil(M.state.total_rows / config.rows_per_page)
 	M.state.current_page = max_pages
 	M.fetch_data_for_page(buf)
 	M.reset_cursor()
@@ -91,7 +91,7 @@ end
 --- Navigate to the next page of data
 --- @param buf number The buffer number to update
 function M.next_page(buf)
-	local max_pages = math.ceil(M.state.total_rows / M.state.rows_per_page)
+	local max_pages = math.ceil(M.state.total_rows / config.rows_per_page)
 	if M.state.current_page < max_pages then
 		M.state.current_page = M.state.current_page + 1
 		M.fetch_data_for_page(buf)
