@@ -2,6 +2,8 @@
 
 A Neovim plugin for interacting with DuckDB databases.
 
+https://github.com/user-attachments/assets/a74d2c7d-0baf-404a-8c18-ad17b7461622
+
 ## Prerequisites
 
 - [DuckDB CLI](https://duckdb.org/) installed and available in your `$PATH`
