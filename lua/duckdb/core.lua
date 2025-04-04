@@ -136,6 +136,7 @@ function M.view_data()
 	local buf = vim.api.nvim_create_buf(false, true)
 	local win = vim.api.nvim_get_current_win()
 	vim.api.nvim_set_option_value("wrap", false, { win = win })
+	vim.api.nvim_set_option_value("filetype", "duck_view", { buf = buf })
 	vim.api.nvim_win_set_buf(win, buf)
 
 	-- Reset state for new file
